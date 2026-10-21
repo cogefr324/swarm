@@ -44,8 +44,8 @@ app.use(express.json());
 
 
 // ---- Strict feed filters ----
-const TOP_MIN_VOLUME_USD = Number(process.env.TOP_MIN_VOLUME_USD) || 100000; // Top needs real trading
-const TOP_MIN_TXNS = Number(process.env.TOP_MIN_TXNS) || 500;
+const TOP_MIN_VOLUME_USD = Number(process.env.TOP_MIN_VOLUME_USD) || 30000; // Top needs real trading
+const TOP_MIN_TXNS = Number(process.env.TOP_MIN_TXNS) || 100;
 const MIN_VOLUME_USD = 1000; // hide anything under $1,000 24h volume
 const MIN_LIQUIDITY_USD = 1000; // optional extra scam filter
 const RUG_PER_CYCLE = 30;
@@ -158,6 +158,7 @@ import { createPulse } from './pulse.js';
 import { summaryVerdict } from '../src/rugAnalysis.js';
 import { SERVER_VERSION } from '../src/version.js';
 import { rpc as chainRpc } from './onchain-bundle.js';
+import { requestChartScan, chartState, chartStats } from './chartscan.js';
 import { requestWashScan, washState, washStats } from './washtrade.js';
 import { requestBundleScan, bundleState, bundleStats } from './onchain-bundle.js';
 import { conyrRefresh, conyrEnabled, conyrStatus } from './conyr.js';
@@ -444,6 +445,7 @@ async function fullLpPct(mint) {
     return Number(ms[0].lp.lpLockedPct);
   } catch { return null; }
 }
+const topShown = new Map(); // mint -> last time it passed every Top rule
 async function checkListSafety({ top, trending, newPairs }) {
   const prio = [...newPairs.slice(0, 60), ...trending.slice(0, 60), ...top, ...trending.slice(60)];
   const seen = new Set();
@@ -522,14 +524,17 @@ async function checkListSafety({ top, trending, newPairs }) {
     if (v?.level === 'rugged') return 'rugged';
     if (x?.mintable) return 'mintable';
     if (x?.freezable) return 'freezable';
-    // LP unlocked alone proves nothing (plenty of real coins) - only hide it when RugCheck ALSO rates the coin risky
-    if (v?.lpUnlocked && !onCurve(e) && (v.score ?? 0) >= 25) return 'LP unlocked + risky';
+    // (LP unlocked is NOT a reason to hide a coin)
 
 
     // Bundled / clustered / insider-held supply (the "obvious rug" that passes mint, freeze and LP checks)
-    const hb = holderBlock(e.mint);
+    const hb = holderBlock(e.mint, list);
     if (hb) return hb;
 
+
+    // Only-green chart (bot-driven straight-line climb)
+    const cst = chartState(e.pairAddress);
+    if (cst.status === 'fake') return `fake chart (only green: +${Math.round((cst.gain || 0) * 100)}%, max dip ${Math.round((cst.maxDD || 0) * 100)}%)`;
 
     // Fake volume: a few wallets (or one funder's side wallets) trading back and forth. Only confirmed wash trading hides a coin.
     const wsx = washState(e.pairAddress);
@@ -556,14 +561,13 @@ async function checkListSafety({ top, trending, newPairs }) {
     if (!(list === 'top' && !liq) && liq < MIN_LIQUIDITY_USD) return `liquidity < $${MIN_LIQUIDITY_USD}`;
 
 
-    // High RugCheck risk everywhere
-    if (v && v.score != null && v.score >= TRENDING_RUG_SCORE_MAX) return 'high risk';
 
 
     // New Pairs must be checked before they are shown
     if (list === 'new' && !checked && !onCurve(e)) return 'unchecked';
 
     // survived every cheap rule -> queue the (slow, free-RPC) bundle scan; Trending/New wait for a clean result
+    requestChartScan(e.pairAddress, { prio: list === 'top' ? 0 : 1, rank: idx, young: !!e.pairCreatedAt && Date.now() - e.pairCreatedAt < 12 * 3600000 });
     requestWashScan(e.pairAddress, { prio: list === 'top' ? 1 : 0, rank: idx });
     requestBundleScan(e.mint, { prio: list === 'top' ? 1 : 0, rank: idx, pairCreatedAt: e.pairCreatedAt });
     // not scanned yet = shown (the scan runs in the background and hides the coin the moment it proves a bundle)
@@ -571,8 +575,11 @@ async function checkListSafety({ top, trending, newPairs }) {
   };
 
 
+  // Coins already shown in Top stay for 15 min when the only problem is a soft one (numbers flickering), so lists do not shrink and regrow.
+  const SOFT = /^(volume|liquidity|low volume|few trades|too new|unchecked)/;
   const apply = (list, name) => list.filter((e, idx) => {
-    const why = verdict(e, name, idx);
+    let why = verdict(e, name, idx);
+    if (name === 'top') { if (!why) topShown.set(e.mint, Date.now()); else if (SOFT.test(why) && Date.now() - (topShown.get(e.mint) || 0) < 15 * 60000) why = null; }
     if (why) { dropped.push(`${e.symbol || e.mint.slice(0, 6)} (${why})`); const k = `${e.mint}:${why}`; if (name === 'top' && why !== 'checking bundles' && !logStats.hiddenEver.has(k)) { logStats.hiddenEver.add(k); newlyHidden.push(`${e.symbol || e.mint.slice(0, 6)} (${why})`); } }
     return !why;
   });
@@ -786,6 +793,7 @@ app.get('/api/feed', authMiddleware, async (req, res) => {
     conyr: conyrStatus(),
     bundleScan: bundleStats(),
     washScan: washStats(),
+    chartScan: chartStats(),
   });
 });
 
@@ -1080,8 +1088,8 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 });
 
 setInterval(() => {
-  const l = logStats; const bs_ = bundleStats(); const ws_ = washStats();
-  console.log(`[status] scanned ${l.scanned} | showing top ${l.shown.top}, trending ${l.shown.trending}, new ${l.shown.new} | filtered ${l.hiddenNow} | wash scans: ${ws_.scanned} done, ${ws_.fake} fake | bundle scans: ${bs_.scanned} done, ${bs_.bundled} bundled, ${bs_.queued} queued | API errors ${l.apiErrors}${l.rateLimited ? ` (${l.rateLimited} rate-limited)` : ''}`);
+  const l = logStats; const bs_ = bundleStats(); const ws_ = washStats(); const cs_ = chartStats();
+  console.log(`[status] scanned ${l.scanned} | showing top ${l.shown.top}, trending ${l.shown.trending}, new ${l.shown.new} | filtered ${l.hiddenNow} | chart scans: ${cs_.scanned} done, ${cs_.fake} fake | wash scans: ${ws_.scanned} done, ${ws_.fake} fake | bundle scans: ${bs_.scanned} done, ${bs_.bundled} bundled, ${bs_.queued} queued | API errors ${l.apiErrors}${l.rateLimited ? ` (${l.rateLimited} rate-limited)` : ''}`);
   l.apiErrors = 0; l.rateLimited = 0;
 }, 60000).unref();
 

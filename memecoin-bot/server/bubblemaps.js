@@ -139,9 +139,9 @@ export async function refreshReports(mints) {
 export const reportOf = (mint) => rcCache.get(mint)?.v || null;
 
 // The one question the feed asks: why (if at all) should this coin be hidden for holder concentration?
-export function holderBlock(mint) {
+export function holderBlock(mint, list) {
   const cb = conyrFeedBlock(mint); if (cb) return cb;
   const b = bubbleOf(mint); if (b?.bad) return `bubblemaps: ${b.bad}`;
-  const r = reportOf(mint); if (r?.bad) return `holders: ${r.bad}`;
+  const r = reportOf(mint); if (r?.bad && !(list === 'top' && /^top10/.test(r.bad))) return `holders: ${r.bad}`;
   return null;
 }
