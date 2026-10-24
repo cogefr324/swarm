@@ -16,7 +16,7 @@ function FillMarker(props) {
   const isBuy = payload.type === 'buy';
   return (
     <g>
-      <circle cx={cx} cy={cy} r={9} fill={isBuy ? '#4caf50' : '#f44336'} stroke="#0e0f13" strokeWidth={1.5} />
+      <circle cx={cx} cy={cy} r={9} fill={isBuy ? '#3ddc97' : '#ff5d6c'} stroke="#0a111b" strokeWidth={1.5} />
       <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fontSize={10} fontWeight="bold" fill="#fff">
         {isBuy ? 'B' : 'S'}
       </text>
@@ -59,17 +59,17 @@ export default function PositionChart({ position, settings }) {
           />
 
           {avgCostMc && (
-            <ReferenceLine y={avgCostMc} stroke="#c084fc" strokeDasharray="4 4" label={{ value: `Avg Cost ${formatMC(avgCostMc)}`, fontSize: 11, fill: '#c084fc', position: 'insideTopLeft' }} />
+            <ReferenceLine y={avgCostMc} stroke="#5ec8ff" strokeDasharray="4 4" label={{ value: `Avg Cost ${formatMC(avgCostMc)}`, fontSize: 11, fill: '#5ec8ff', position: 'insideTopLeft' }} />
           )}
           {stopLossMc && (
-            <ReferenceLine y={stopLossMc} stroke="#f44336" strokeDasharray="4 4" label={{ value: `Stop Loss ${formatMC(stopLossMc)}`, fontSize: 11, fill: '#f44336', position: 'insideBottomLeft' }} />
+            <ReferenceLine y={stopLossMc} stroke="#ff5d6c" strokeDasharray="4 4" label={{ value: `Stop Loss ${formatMC(stopLossMc)}`, fontSize: 11, fill: '#ff5d6c', position: 'insideBottomLeft' }} />
           )}
 
-          <Line data={chartData} dataKey="marketCap" type="monotone" stroke="#8884d8" dot={false} strokeWidth={2} isAnimationActive={false} />
+          <Line data={chartData} dataKey="marketCap" type="monotone" stroke="#5ec8ff" dot={false} strokeWidth={2} isAnimationActive={false} />
           <Scatter data={fillData} dataKey="marketCap" shape={FillMarker} isAnimationActive={false} />
         </ComposedChart>
       </ResponsiveContainer>
-      <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
+      <div style={{ fontSize: 11, color: '#8296ad', marginTop: 4 }}>
         🟢 B = tranche buy &nbsp; 🔴 S = tranche sell &nbsp; Purple dashed = average cost basis &nbsp;
         Red dashed = hard stop-loss. Hover any point for details. This tracks only since the bot
         started farming this coin.

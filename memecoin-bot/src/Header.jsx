@@ -33,7 +33,7 @@ export default function Header({ onGoHome, onShowGuide }) {
         padding: '4px 4px 0',
       }}
     >
-      <h1 style={{ margin: 0 }}>Memecoin Farming Bot</h1>
+      <h1 style={{ margin: 0 }}>Swarm</h1>
 
       <div ref={menuRef} style={{ position: 'relative' }}>
         <button
@@ -50,8 +50,8 @@ export default function Header({ onGoHome, onShowGuide }) {
               position: 'absolute',
               right: 0,
               top: '110%',
-              background: '#17181f',
-              border: '1px solid #2e303a',
+              background: '#111a26',
+              border: '1px solid #223247',
               borderRadius: 8,
               boxShadow: 'rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px',
               minWidth: 160,
@@ -67,17 +67,17 @@ export default function Header({ onGoHome, onShowGuide }) {
               Menu
             </button>
             <a
-              href="https://discord.gg/memenigas"
+              href="https://discord.gg/cgCyQ5EWVx"
               target="_blank"
               rel="noreferrer"
               onClick={() => setOpen(false)}
-              style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px', color: 'inherit', textDecoration: 'none', borderTop: '1px solid #2e303a' }}
+              style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px', color: 'inherit', textDecoration: 'none', borderTop: '1px solid #223247' }}
             >
               Discord
             </a>
             <button
               onClick={handleGuideClick}
-              style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px', border: 'none', borderRadius: 0, background: 'transparent', borderTop: '1px solid #2e303a' }}
+              style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px', border: 'none', borderRadius: 0, background: 'transparent', borderTop: '1px solid #223247' }}
             >
               Guide
             </button>

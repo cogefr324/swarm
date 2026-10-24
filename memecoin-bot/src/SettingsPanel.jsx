@@ -32,7 +32,7 @@ export default function SettingsPanel() {
 
   const field = (label, name, hint) => (
     <div style={{ marginBottom: 12 }}>
-      <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 4 }}>{label}</label>
+      <label style={{ display: 'block', fontSize: 12, color: '#8296ad', marginBottom: 4 }}>{label}</label>
       <input
         type="number"
         name={name}
@@ -45,39 +45,39 @@ export default function SettingsPanel() {
   );
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: 16, border: '1px solid #2e303a', borderRadius: 8, background: '#17181f', textAlign: 'left' }}>
+    <div style={{ maxWidth: 1000, margin: '0 auto', padding: 16, border: '1px solid #223247', borderRadius: 8, background: '#111a26', textAlign: 'left' }}>
       <h3 style={{ marginTop: 0 }}>Trading bot settings</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0 28px' }}>
       <div>
 
-      <h4 style={{ color: '#c084fc', marginBottom: 8, marginTop: 16 }}>Scaling (tranche sizes)</h4>
+      <h4 style={{ color: '#5ec8ff', marginBottom: 8, marginTop: 16 }}>Scaling (tranche sizes)</h4>
       {field('Tranche Buy (% of available cash)', 'trancheBuyPct', 'How much of what\'s left to deploy per dip/spike buy - never all at once')}
       {field('Tranche Sell (% of tokens held)', 'trancheSellPct', 'How much of your holding to sell per pump - never the whole position')}
 
       </div>
       <div>
-      <h4 style={{ color: '#c084fc', marginBottom: 8, marginTop: 16 }}>Entry/Exit Triggers</h4>
+      <h4 style={{ color: '#5ec8ff', marginBottom: 8, marginTop: 16 }}>Entry/Exit Triggers</h4>
       {field('Dip Buy Threshold (% pullback)', 'dipBuyThresholdPct', 'Buy a tranche when price pulls back this % from its recent high')}
       {field('Spike Threshold (% in 5m)', 'spikeThresholdPct', 'Buy a tranche if price jumps this % in 5 minutes with strong buy pressure')}
       {field('Spike Buy Dominance Ratio (buys : sells)', 'spikeBuyDominanceRatio')}
       {field('Pump Sell Threshold (% from low)', 'takeProfitPct', 'Sell a tranche when price rises this % from its recent low')}
 
-      <h4 style={{ color: '#c084fc', marginBottom: 8, marginTop: 16 }}>Hard Safety Net</h4>
+      <h4 style={{ color: '#5ec8ff', marginBottom: 8, marginTop: 16 }}>Hard Safety Net</h4>
       {field('Stop Loss (% from avg cost)', 'stopLossPct', 'Fully closes the position if it ever falls this far below your average cost - the only automatic full exit')}
 
       </div>
       <div>
-      <h4 style={{ color: '#c084fc', marginBottom: 8, marginTop: 16 }}>Coin Analysis Minimums</h4>
+      <h4 style={{ color: '#5ec8ff', marginBottom: 8, marginTop: 16 }}>Coin Analysis Minimums</h4>
       {field('Min Liquidity ($)', 'minLiquidityUsd')}
       {field('Min 24h Volume ($)', 'minVolume24hUsd')}
 
-      <h4 style={{ color: '#c084fc', marginBottom: 8, marginTop: 16 }}>Bundle / Holder Risk (via RugCheck)</h4>
+      <h4 style={{ color: '#5ec8ff', marginBottom: 8, marginTop: 16 }}>Bundle / Holder Risk (via RugCheck)</h4>
       {field('Max Dev Holding (%)', 'maxDevHoldingPct')}
       {field('Max Top 10 Holders (%)', 'maxTop10HoldingPct')}
 
       </div>
       <div>
-      <h4 style={{ color: '#c084fc', marginBottom: 8, marginTop: 16 }}>🚀 Early Gem Detection (v2)</h4>
+      <h4 style={{ color: '#5ec8ff', marginBottom: 8, marginTop: 16 }}>🚀 Early Gem Detection (v2)</h4>
       <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
         <input
           type="checkbox"
@@ -91,7 +91,7 @@ export default function SettingsPanel() {
         </label>
       </div>
       <div style={{ marginBottom: 8 }}>
-        <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 4 }}>
+        <label style={{ display: 'block', fontSize: 12, color: '#8296ad', marginBottom: 4 }}>
           Auto-buy Amount per Gem ($)
         </label>
         <input
@@ -110,7 +110,7 @@ export default function SettingsPanel() {
         </label>
       </div>
       <div style={{ marginBottom: 8 }}>
-        <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 4 }}>
+        <label style={{ display: 'block', fontSize: 12, color: '#8296ad', marginBottom: 4 }}>
           Gem stop loss (% below entry, 0 = off)
         </label>
         <input
@@ -122,7 +122,7 @@ export default function SettingsPanel() {
         />
       </div>
       <div style={{ marginBottom: 8 }}>
-        <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 4 }}>
+        <label style={{ display: 'block', fontSize: 12, color: '#8296ad', marginBottom: 4 }}>
           Max gem positions open at once
         </label>
         <input
@@ -149,7 +149,7 @@ export default function SettingsPanel() {
           maxWidth: 320,
           padding: '10px',
           marginTop: 8,
-          background: saved ? '#1b3a1f' : '#4caf50',
+          background: saved ? '#1b3a1f' : '#3ddc97',
           color: 'white',
           fontWeight: 'bold',
           borderRadius: 6,
@@ -160,7 +160,7 @@ export default function SettingsPanel() {
         {saved ? 'Saved ✓' : 'Save Settings'}
       </button>
 
-      <hr style={{ borderColor: '#2e303a', margin: '16px 0' }} />
+      <hr style={{ borderColor: '#223247', margin: '16px 0' }} />
 
       <button
         onClick={handleReset}
@@ -168,8 +168,8 @@ export default function SettingsPanel() {
           width: '100%',
           padding: '10px',
           background: '#3a1717',
-          color: '#f44336',
-          borderColor: '#f44336',
+          color: '#ff5d6c',
+          borderColor: '#ff5d6c',
           fontWeight: 'bold',
           borderRadius: 6,
           cursor: 'pointer',

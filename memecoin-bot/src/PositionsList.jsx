@@ -15,14 +15,14 @@ export default function PositionsList({ onViewCoin }) {
 
   if (active.length === 0) {
     return (
-      <div style={{ maxWidth: '100%', margin: '20px 0', padding: 16, textAlign: 'center', color: '#888', border: '1px solid #2e303a', borderRadius: 8, background: '#17181f' }}>
+      <div style={{ maxWidth: '100%', margin: '20px 0', padding: 16, textAlign: 'center', color: '#8296ad', border: '1px solid #223247', borderRadius: 8, background: '#111a26' }}>
         No open positions yet. Pick a coin in the Scanning tab to start farming.
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: '100%', margin: '20px 0', padding: 16, border: '1px solid #2e303a', borderRadius: 8, background: '#17181f', boxShadow: 'rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px' }}>
+    <div style={{ maxWidth: '100%', margin: '20px 0', padding: 16, border: '1px solid #223247', borderRadius: 8, background: '#111a26', boxShadow: 'rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px' }}>
       <h3 style={{ marginTop: 0 }}>Open positions</h3>
       <div style={{ maxHeight: 420, overflowY: 'auto', overflowX: 'auto' }}>
 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -53,27 +53,27 @@ export default function PositionsList({ onViewCoin }) {
                 key={pos.id}
                 style={{ borderBottom: '1px solid #222', cursor: 'pointer' }}
                 onClick={() => onViewCoin(pos)}
-                onMouseEnter={(e) => (e.currentTarget.style.background = '#1f2028')}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#162233')}
                 onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               >
                 <td style={{ padding: 8 }}>{pos.symbol}</td>
                 <td style={{ padding: 8, fontSize: 12 }}>
                   {isGem ? (
-                    <span style={{ color: '#c084fc' }}>🚀 Gem/Clip{nextClip ? ` (next +${nextClip.pct}%)` : ''}</span>
+                    <span style={{ color: '#5ec8ff' }}>🚀 Gem/Clip{nextClip ? ` (next +${nextClip.pct}%)` : ''}</span>
                   ) : (
-                    <span style={{ color: '#888' }}>Farm</span>
+                    <span style={{ color: '#8296ad' }}>Farm</span>
                   )}
                 </td>
                 <td style={{ padding: 8 }}>${pos.budgetUsd.toFixed(2)} / ${pos.availableCash.toFixed(2)}</td>
                 <td style={{ padding: 8, fontWeight: 'bold' }}>${heldValue.toFixed(2)}</td>
-                <td style={{ padding: 8, color: unrealizedPnl >= 0 ? '#4caf50' : '#f44336' }}>
+                <td style={{ padding: 8, color: unrealizedPnl >= 0 ? '#3ddc97' : '#ff5d6c' }}>
                   {unrealizedPnl >= 0 ? '+' : '-'}${Math.abs(unrealizedPnl).toFixed(2)}
                   {pos.avgCostBasis > 0 && <span style={{ fontSize: 11 }}> ({unrealizedPnl >= 0 ? '+' : ''}{(((pos.currentPrice - pos.avgCostBasis) / pos.avgCostBasis) * 100).toFixed(1)}%)</span>}
                 </td>
-                <td style={{ padding: 8, color: pos.realizedPnlUsd >= 0 ? '#4caf50' : '#f44336' }}>
+                <td style={{ padding: 8, color: pos.realizedPnlUsd >= 0 ? '#3ddc97' : '#ff5d6c' }}>
                   {pos.realizedPnlUsd >= 0 ? '+' : '-'}${Math.abs(pos.realizedPnlUsd).toFixed(2)}
                 </td>
-                <td style={{ padding: 8, color: totalPnl >= 0 ? '#4caf50' : '#f44336', fontWeight: 'bold' }}>
+                <td style={{ padding: 8, color: totalPnl >= 0 ? '#3ddc97' : '#ff5d6c', fontWeight: 'bold' }}>
                   {totalPnl >= 0 ? '+' : '-'}${Math.abs(totalPnl).toFixed(2)} <span style={{ fontWeight: 'normal', fontSize: 11 }}>({totalPnlPct.toFixed(1)}%)</span>
                 </td>
                 <td style={{ padding: 8 }}>{pos.fills.length}</td>

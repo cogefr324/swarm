@@ -100,7 +100,7 @@ export default function SwapPanel() {
           />
         </label>
 
-        <div style={{ marginTop: 12, fontSize: 13, color: '#888' }}>
+        <div style={{ marginTop: 12, fontSize: 13, color: '#8296ad' }}>
           Swapping: SOL → USDC (test pair for this proof of concept — the real bot will swap
           SOL against whatever coin you pick, not USDC)
         </div>
@@ -110,7 +110,7 @@ export default function SwapPanel() {
         </button>
 
         {quote && (
-          <div style={{ marginTop: 12, padding: 12, background: '#1f2028', borderRadius: 8, color: '#f3f4f6' }}>
+          <div style={{ marginTop: 12, padding: 12, background: '#162233', borderRadius: 8, color: '#f3f4f6' }}>
             <div>You send: {amount} SOL</div>
             <div>You receive (est): {(quote.outAmount / 1e6).toFixed(4)} USDC</div>
             <div>Price impact: {quote.priceImpactPct}%</div>
@@ -120,7 +120,7 @@ export default function SwapPanel() {
                 {loading ? 'Processing...' : 'Confirm Swap'}
               </button>
             ) : (
-              <div style={{ marginTop: 10, color: '#a00', fontSize: 13 }}>
+              <div style={{ marginTop: 10, color: '#ff5d6c', fontSize: 13 }}>
                 Connect your wallet above to actually execute this trade. Viewing quotes doesn't require it.
               </div>
             )}

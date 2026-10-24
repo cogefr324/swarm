@@ -10,7 +10,7 @@ function fmtMC(v) {
   return `$${v.toFixed(0)}`;
 }
 
-const COLORS = { buy: '#4caf50', sell: '#f44336', gem: '#4caf50' };
+const COLORS = { buy: '#3ddc97', sell: '#ff5d6c', gem: '#3ddc97' };
 const LABEL = { buy: 'BUY', sell: 'SELL', gem: 'GEM' };
 
 // Live activity log, like the log in SolBot: every buy/sell the bot made plus what the early-gem
@@ -58,20 +58,20 @@ export default function BotLog() {
     <button
       key={id}
       onClick={() => setFilter(id)}
-      style={{ padding: '3px 10px', fontSize: 12, borderRadius: 99, fontWeight: filter === id ? 'bold' : 'normal', background: filter === id ? '#2a2c38' : undefined }}
+      style={{ padding: '3px 10px', fontSize: 12, borderRadius: 99, fontWeight: filter === id ? 'bold' : 'normal', background: filter === id ? '#2a3d55' : undefined }}
     >
       {label}
     </button>
   );
 
   return (
-    <div style={{ padding: 16, border: '1px solid #2e303a', borderRadius: 8, background: '#17181f', margin: '20px 0' }}>
+    <div style={{ padding: 16, border: '1px solid #223247', borderRadius: 8, background: '#111a26', margin: '20px 0' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
         <h3 style={{ margin: 0 }}>Bot log</h3>
         <div style={{ display: 'flex', gap: 6 }}>{chip('all', 'All')}{chip('trades', 'Trades')}{chip('scanner', 'Gems found')}</div>
       </div>
       {/* one quiet health line so you can tell the scanner is alive - no per-coin skip lines */}
-      <div style={{ fontSize: 11, color: scanStats.error ? '#f44336' : '#777', marginBottom: 6 }}>
+      <div style={{ fontSize: 11, color: scanStats.error ? '#ff5d6c' : '#777', marginBottom: 6 }}>
         {scanStats.at
           ? `Scanner last ran ${new Date(scanStats.at).toLocaleTimeString()} · ${scanStats.evaluated} coins checked · ${scanStats.passedFilters} passed filters · ${scanStats.blocked} blocked by safety${Object.keys(scanStats.blockedWhy).length ? ' (' + Object.entries(scanStats.blockedWhy).map(([k, v]) => `${v}× ${k}`).join(', ') + ')' : ''}${scanStats.error ? ' · error: ' + scanStats.error : ''}`
           : 'Scanner starting...'}
@@ -82,8 +82,8 @@ export default function BotLog() {
           <div key={l.key} style={{ display: 'flex', gap: 10, padding: '4px 10px', borderBottom: '1px solid #181a22' }}>
             <span style={{ color: '#666', flexShrink: 0 }}>{new Date(l.t).toLocaleTimeString()}</span>
             <span style={{ color: COLORS[l.kind], fontWeight: 'bold', width: 38, flexShrink: 0 }}>{LABEL[l.kind]}</span>
-            <span style={{ color: l.kind === 'gem' ? '#4caf50' : '#eee', fontWeight: 'bold', flexShrink: 0 }}>{l.sym}</span>
-            <span style={{ color: l.kind === 'gem' ? '#4caf50' : '#9aa0b0', overflowWrap: 'anywhere' }}>{l.text}</span>
+            <span style={{ color: l.kind === 'gem' ? '#3ddc97' : '#eee', fontWeight: 'bold', flexShrink: 0 }}>{l.sym}</span>
+            <span style={{ color: l.kind === 'gem' ? '#3ddc97' : '#9aa0b0', overflowWrap: 'anywhere' }}>{l.text}</span>
           </div>
         ))}
       </div>

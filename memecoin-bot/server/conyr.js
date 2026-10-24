@@ -8,7 +8,7 @@ export const CONYR_CFG = {
   base: env.CONYR_BASE_URL || 'https://api.conyr.ai',
   perMin: num('CONYR_PER_MIN', 8),
   ttlMs: num('CONYR_TTL_MIN', 20) * 60000,
-  feedMaxPct: num('CONYR_FEED_MAX_PCT', 25), // coins above this are hidden from Top/Trending/New
+  feedMaxPct: num('CONYR_FEED_MAX_PCT', 90), // coins above this are hidden from Top/Trending/New
   timeoutMs: 8000,
 };
 export const conyrEnabled = () => !!CONYR_CFG.key;

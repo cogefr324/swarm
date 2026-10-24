@@ -19,6 +19,7 @@ export async function fetchTrendingFeed() {
     finalStretch: data.finalStretch || [],
     migrated: data.migrated || [],
     trending: data.trending || [],
+    trendingWindows: data.trendingWindows || null,
     top: data.top || [],
     launchpads: data.launchpads || [],
     serverVersion: data.serverVersion || null,

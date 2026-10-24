@@ -51,7 +51,7 @@ function AuthGate() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100svh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
+      <div style={{ minHeight: '100svh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8296ad' }}>
         Loading...
       </div>
     );
@@ -120,11 +120,12 @@ function TradingApp() {
       key={id}
       onClick={() => setTab(id)}
       style={{
-        padding: '10px 22px',
-        fontSize: 15,
+        padding: '9px 18px',
+        fontSize: 14,
+        whiteSpace: 'nowrap',
         fontWeight: tab === id ? 'bold' : 'normal',
-        background: tab === id ? '#2a2c38' : 'transparent',
-        borderColor: tab === id ? '#c084fc' : '#2e303a',
+        background: tab === id ? '#2a3d55' : 'transparent',
+        borderColor: tab === id ? '#5ec8ff' : '#223247',
         color: tab === id ? '#fff' : '#aaa',
         borderRadius: 10,
       }}
@@ -141,13 +142,15 @@ function TradingApp() {
       </ErrorBoundary>
 
       <div style={{ position: 'relative', textAlign: 'center', paddingTop: 30, paddingBottom: 60, paddingInline: 16 }}>
-        <HamburgerMenu onGoHome={handleGoHome} onOpenGuide={() => setGuideOpen(true)} onOpenAccount={() => setAccountOpen(true)} onOpenPositions={() => setTab('wallets')} />
         {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} />}
         {accountOpen && <AccountModal onClose={() => setAccountOpen(false)} />}
 
-        <h1>Memecoin Farming Bot</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: 1300, margin: '0 auto 18px', gap: 12 }}>
+          <h1 style={{ margin: 0, fontSize: 32, letterSpacing: 1, background: 'linear-gradient(135deg,#9be3ff,#3aa8ff)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>Swarm</h1>
+          <HamburgerMenu onGoHome={handleGoHome} onOpenGuide={() => setGuideOpen(true)} onOpenAccount={() => setAccountOpen(true)} onOpenPositions={() => setTab('wallets')} />
+        </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 22, rowGap: 8 }}>
           {TABS.map(tabButton)}
         </div>
 
@@ -155,7 +158,7 @@ function TradingApp() {
           {tab === 'scanning' && (
             <div style={{ minWidth: 0 }}>
               {!selectedCoin && (
-                <p style={{ color: '#888', textAlign: 'center' }}>
+                <p style={{ color: '#8296ad', textAlign: 'center' }}>
                   Search a coin or pick one from the lists, set a budget, click "Start Farming" - the bot analyzes it (including
                   RugCheck holder/bundle data), then scales into dips or spikes with partial tranches, and scales out with partial
                   sells on pumps. Early gems the bot spots on its own show up as popups - those buy in immediately and take profit in clips.
@@ -178,13 +181,13 @@ function TradingApp() {
               <div style={{ textAlign: 'center', marginBottom: 8 }}>
                 <button
                   onClick={() => setMode('paper')}
-                  style={{ padding: '8px 16px', marginRight: 8, fontWeight: mode === 'paper' ? 'bold' : 'normal', background: mode === 'paper' ? '#4caf50' : undefined, color: mode === 'paper' ? 'white' : undefined, borderColor: mode === 'paper' ? '#4caf50' : undefined }}
+                  style={{ padding: '8px 16px', marginRight: 8, fontWeight: mode === 'paper' ? 'bold' : 'normal', background: mode === 'paper' ? '#3ddc97' : undefined, color: mode === 'paper' ? 'white' : undefined, borderColor: mode === 'paper' ? '#3ddc97' : undefined }}
                 >
                   Paper Wallet (Fake Money)
                 </button>
                 <button
                   onClick={() => setMode('live')}
-                  style={{ padding: '8px 16px', fontWeight: mode === 'live' ? 'bold' : 'normal', background: mode === 'live' ? '#f44336' : undefined, color: mode === 'live' ? 'white' : undefined, borderColor: mode === 'live' ? '#f44336' : undefined }}
+                  style={{ padding: '8px 16px', fontWeight: mode === 'live' ? 'bold' : 'normal', background: mode === 'live' ? '#ff5d6c' : undefined, color: mode === 'live' ? 'white' : undefined, borderColor: mode === 'live' ? '#ff5d6c' : undefined }}
                 >
                   Live Wallet (Real Funds)
                 </button>
@@ -199,7 +202,7 @@ function TradingApp() {
                 </ErrorBoundary>
               ) : (
                 <>
-                  <p style={{ color: '#f44336', textAlign: 'center' }}>
+                  <p style={{ color: '#ff5d6c', textAlign: 'center' }}>
                     Live mode uses real funds from your connected wallet. Phase 3 proof-of-concept swap below.
                   </p>
                   <SwapPanel />

@@ -29,8 +29,8 @@ function GemAlertCard({ alert, onDismiss, onBuy, autoBuyEnabled }) {
       onMouseLeave={() => setHover(false)}
       style={{
         width: 300,
-        background: '#17181f',
-        border: '1px solid #c084fc',
+        background: '#111a26',
+        border: '1px solid #5ec8ff',
         borderRadius: 10,
         boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
         overflow: 'hidden',
@@ -44,8 +44,8 @@ function GemAlertCard({ alert, onDismiss, onBuy, autoBuyEnabled }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
           <CoinIcon mint={alert.mint} src={alert.iconUrl} symbol={alert.symbol} size={28} />
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontWeight: 'bold', color: '#c084fc', fontSize: 13 }}>🚀 Early Gem: {alert.symbol}</div>
-            <div style={{ fontSize: 11, color: '#888' }}>MC {formatMC(alert.marketCap)} · {expanded ? 'hide' : 'why?'}</div>
+            <div style={{ fontWeight: 'bold', color: '#5ec8ff', fontSize: 13 }}>🚀 Early Gem: {alert.symbol}</div>
+            <div style={{ fontSize: 11, color: '#8296ad' }}>MC {formatMC(alert.marketCap)} · {expanded ? 'hide' : 'why?'}</div>
           </div>
         </div>
         <button onClick={(e) => { e.stopPropagation(); onDismiss(alert.mint); }} style={{ padding: '2px 8px', fontSize: 12, flexShrink: 0 }}>
@@ -61,13 +61,13 @@ function GemAlertCard({ alert, onDismiss, onBuy, autoBuyEnabled }) {
               <li key={i} style={{ marginBottom: 2 }}>{r}</li>
             ))}
           </ul>
-          <div style={{ marginTop: 8, color: '#888' }}>
+          <div style={{ marginTop: 8, color: '#8296ad' }}>
             Price: ${alert.priceUsd < 0.01 ? alert.priceUsd.toFixed(8) : alert.priceUsd.toFixed(4)} · 24h: {alert.priceChange24h?.toFixed(1)}%
           </div>
           {autoBuyEnabled ? (
-            <div style={{ marginTop: 10, fontSize: 12, color: '#4caf50' }}>Auto-buy enabled — handled automatically.</div>
+            <div style={{ marginTop: 10, fontSize: 12, color: '#3ddc97' }}>Auto-buy enabled — handled automatically.</div>
           ) : (
-            <button onClick={() => onBuy(alert)} style={{ marginTop: 10, width: '100%', background: '#c084fc', color: '#1a1a1a', border: 'none', fontWeight: 'bold' }}>
+            <button onClick={() => onBuy(alert)} style={{ marginTop: 10, width: '100%', background: '#5ec8ff', color: '#1a1a1a', border: 'none', fontWeight: 'bold' }}>
               Buy Now (Clip Mode)
             </button>
           )}

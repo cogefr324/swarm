@@ -26,7 +26,7 @@ export const BUNDLE_CFG = {
   freshMin: num('BUNDLE_FRESH_MIN', 20),                // wallet's first tx <= this many minutes before it bought the token = burner
   wallets: num('BUNDLE_WALLETS', 12),                   // top holders investigated per coin (RPC cost)
   budgetMs: num('BUNDLE_BUDGET_MS', 45000),
-  concurrency: num('BUNDLE_CONCURRENCY', 2),            // coins scanned in parallel
+  concurrency: num('BUNDLE_CONCURRENCY', 4),            // coins scanned in parallel
   okTtlMin: num('BUNDLE_OK_TTL_MIN', 30),
   badTtlMin: num('BUNDLE_BAD_TTL_MIN', 360),
   retryMin: num('BUNDLE_RETRY_MIN', 5),

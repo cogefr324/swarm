@@ -119,13 +119,13 @@ export default function CoinSearch({ onSelectCoin }) {
         style={{
           padding: '10px 14px',
           cursor: 'pointer',
-          borderBottom: isLast ? 'none' : '1px solid #2e303a',
+          borderBottom: isLast ? 'none' : '1px solid #223247',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: 10,
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = '#1f2028')}
+        onMouseEnter={(e) => (e.currentTarget.style.background = '#162233')}
         onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -137,18 +137,18 @@ export default function CoinSearch({ onSelectCoin }) {
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           ) : (
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#2e303a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#223247', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>
               ?
             </div>
           )}
           <div>
             <div><strong>{pair.baseToken.symbol}</strong></div>
-            <div style={{ color: '#888', fontSize: 12 }}>{pair.baseToken.name}</div>
+            <div style={{ color: '#8296ad', fontSize: 12 }}>{pair.baseToken.name}</div>
           </div>
         </div>
         <div style={{ textAlign: 'right', fontSize: 13 }}>
           <div style={{ fontWeight: 'bold' }}>MC: {formatMC(mc, isFdv)}</div>
-          <div style={{ color: pair.priceChange?.h24 >= 0 ? '#4caf50' : '#f44336', fontSize: 12 }}>
+          <div style={{ color: pair.priceChange?.h24 >= 0 ? '#3ddc97' : '#ff5d6c', fontSize: 12 }}>
             {pair.priceChange?.h24?.toFixed(2)}% (24h)
           </div>
         </div>
@@ -168,23 +168,23 @@ export default function CoinSearch({ onSelectCoin }) {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Search by ticker or contract address..."
-          style={{ flex: 1, padding: '10px 12px', fontSize: 14, borderRadius: 8, border: '1px solid #2e303a' }}
+          style={{ flex: 1, padding: '10px 12px', fontSize: 14, borderRadius: 8, border: '1px solid #223247' }}
         />
         <button onClick={search} disabled={loading} style={{ padding: '10px 18px', borderRadius: 8 }}>
           {loading ? 'Searching...' : 'Search'}
         </button>
       </div>
 
-      {error && <div style={{ marginTop: 8, color: '#a00', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ marginTop: 8, color: '#ff5d6c', fontSize: 13 }}>{error}</div>}
 
       {topMatch && (
-        <div style={{ marginTop: 12, border: '1px solid #2e303a', borderRadius: 8, maxHeight: 380, overflowY: 'auto' }}>
+        <div style={{ marginTop: 12, border: '1px solid #223247', borderRadius: 8, maxHeight: 380, overflowY: 'auto' }}>
           {renderRow(topMatch, otherMatches.length === 0)}
 
           {otherMatches.length > 0 && !showAll && (
             <button
               onClick={() => setShowAll(true)}
-              style={{ width: '100%', padding: '8px 14px', fontSize: 12, borderRadius: 0, border: 'none', borderTop: '1px solid #2e303a' }}
+              style={{ width: '100%', padding: '8px 14px', fontSize: 12, borderRadius: 0, border: 'none', borderTop: '1px solid #223247' }}
             >
               {otherMatches.length} other token{otherMatches.length > 1 ? 's' : ''} share this name
             </button>

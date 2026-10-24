@@ -11,7 +11,7 @@ export default function Dashboard({ onViewCoin }) {
   }));
 
   return (
-    <div style={{ maxWidth: 700, margin: '20px auto', padding: 16, border: '1px solid #2e303a', borderRadius: 8, background: '#17181f', boxShadow: 'rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px' }}>
+    <div style={{ maxWidth: 700, margin: '20px auto', padding: 16, border: '1px solid #223247', borderRadius: 8, background: '#111a26', boxShadow: 'rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px' }}>
       <h4>Balance & PnL Over Time</h4>
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={chartData}>
@@ -20,8 +20,8 @@ export default function Dashboard({ onViewCoin }) {
           <YAxis tick={{ fontSize: 10 }} domain={['auto', 'auto']} />
           <Tooltip formatter={(v, name) => [`$${v.toFixed(2)}`, name]} />
           <Legend wrapperStyle={{ fontSize: 12 }} />
-          <Line type="monotone" dataKey="balance" stroke="#8884d8" dot={false} strokeWidth={2} name="Balance" />
-          <Line type="monotone" dataKey="pnl" stroke="#4caf50" dot={false} strokeWidth={2} name="PnL" />
+          <Line type="monotone" dataKey="balance" stroke="#5ec8ff" dot={false} strokeWidth={2} name="Balance" />
+          <Line type="monotone" dataKey="pnl" stroke="#3ddc97" dot={false} strokeWidth={2} name="PnL" />
         </LineChart>
       </ResponsiveContainer>
 
@@ -53,7 +53,7 @@ export default function Dashboard({ onViewCoin }) {
                   <td style={{ padding: 6 }}>{t.avgCostBasis ? `$${t.avgCostBasis.toFixed(8)}` : 'N/A'}</td>
                   <td style={{ padding: 6 }}>${t.exitPrice?.toFixed(8) ?? 'N/A'}</td>
                   <td style={{ padding: 6 }}>{t.fillCount ?? t.fills?.length ?? 0}</td>
-                  <td style={{ padding: 6, color: t.pnlUsd >= 0 ? '#4caf50' : '#f44336' }}>
+                  <td style={{ padding: 6, color: t.pnlUsd >= 0 ? '#3ddc97' : '#ff5d6c' }}>
                     ${t.pnlUsd.toFixed(2)} ({t.pnlPct.toFixed(1)}%)
                   </td>
                   <td style={{ padding: 6 }}>{t.reason}</td>

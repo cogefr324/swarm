@@ -11,7 +11,7 @@ export default function PositionsModal({ onClose, onViewCoin }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: 1000, margin: '0 auto', background: '#101117', border: '1px solid #2e303a', borderRadius: 10, padding: 20, textAlign: 'left' }}
+        style={{ maxWidth: 1000, margin: '0 auto', background: '#101117', border: '1px solid #223247', borderRadius: 10, padding: 20, textAlign: 'left' }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <h2 style={{ margin: 0 }}>Wallet</h2>

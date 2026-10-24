@@ -11,7 +11,7 @@ export const CHART_CFG = {
   minEfficiency: num('CHART_MIN_EFF', 0.5),
   minGreen: num('CHART_MIN_GREEN', 0.85),
   minCandles: num('CHART_MIN_CANDLES', 40),
-  gapMs: num('CHART_GAP_MS', 7000),
+  gapMs: num('CHART_GAP_MS', 5000),
   ttlMin: num('CHART_TTL_MIN', 60),
 };
 

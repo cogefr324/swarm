@@ -13,7 +13,7 @@ export default function HamburgerMenu({ onGoHome, onOpenGuide, onOpenAccount, on
   }, []);
 
   return (
-    <div ref={ref} style={{ position: 'absolute', top: 24, right: 24 }}>
+    <div ref={ref} style={{ position: 'relative', zIndex: 200, flexShrink: 0 }}>
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label="Menu"
@@ -38,12 +38,12 @@ export default function HamburgerMenu({ onGoHome, onOpenGuide, onOpenAccount, on
             top: 46,
             right: 0,
             minWidth: 180,
-            background: '#17181f',
-            border: '1px solid #2e303a',
+            background: '#111a26',
+            border: '1px solid #223247',
             borderRadius: 8,
             boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
             overflow: 'hidden',
-            zIndex: 50,
+            zIndex: 200,
           }}
         >
           <MenuItem
@@ -68,7 +68,7 @@ export default function HamburgerMenu({ onGoHome, onOpenGuide, onOpenAccount, on
             }}
           />
           <a
-            href="https://discord.gg/memenigas"
+            href="https://discord.gg/cgCyQ5EWVx"
             target="_blank"
             rel="noreferrer"
             style={{ textDecoration: 'none' }}
@@ -101,7 +101,7 @@ function MenuItem({ label, onClick, last }) {
         cursor: 'pointer',
         borderBottom: last ? 'none' : '1px solid #222',
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.background = '#1f2028')}
+      onMouseEnter={(e) => (e.currentTarget.style.background = '#162233')}
       onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
     >
       {label}

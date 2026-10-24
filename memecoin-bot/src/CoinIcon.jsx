@@ -29,7 +29,7 @@ export default function CoinIcon({ mint, src, symbol, size = 32 }) {
       loading="lazy"
       decoding="async"
       referrerPolicy="no-referrer"
-      style={{ width: size, height: size, borderRadius: '50%', flexShrink: 0, objectFit: 'cover', background: '#2e303a' }}
+      style={{ width: size, height: size, borderRadius: '50%', flexShrink: 0, objectFit: 'cover', background: '#223247' }}
       onError={() => setI((n) => n + 1)}
     />
   );

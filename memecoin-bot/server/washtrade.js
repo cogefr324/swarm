@@ -17,7 +17,7 @@ export const WASH_CFG = {
   minUniqueRatio: num('WASH_MIN_UNIQUE_RATIO', 0.2),
   minTrades: num('WASH_MIN_TRADES', 40),
   fundWindowS: num('WASH_FUND_WINDOW_S', 300),
-  gapMs: num('WASH_GAP_MS', 4500),     // GeckoTerminal free limit is ~30/min and the feed already uses it
+  gapMs: num('WASH_GAP_MS', 5000),     // GeckoTerminal free limit is ~30/min and the feed already uses it
   ttlMin: num('WASH_TTL_MIN', 45),
   traceWallets: num('WASH_TRACE_WALLETS', 8),
 };

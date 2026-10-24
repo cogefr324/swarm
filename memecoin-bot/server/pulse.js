@@ -21,6 +21,8 @@ export function createPulse({ fetchJson }) {
   let connected = false;
   let retry = 0;
   const pendingSubs = new Set();
+  const trk = new Map(); // extra (older / migrated) mints we follow only for their trades: mint -> { events: [], at }
+  const TRACK_MAX = 400;
   const metaQueue = [];
   let metaActive = 0;
 
@@ -57,6 +59,12 @@ export function createPulse({ fetchJson }) {
       if (t) { t.migrated = true; t.migratedAt = Date.now(); }
       return;
     }
+    if ((msg.txType === 'buy' || msg.txType === 'sell') && !tokens.has(msg.mint) && trk.has(msg.mint)) {
+      const x = trk.get(msg.mint);
+      x.events.push({ t: Date.now(), buy: msg.txType === 'buy', mc: num(msg.marketCapSol), w: msg.traderPublicKey || null, sol: num(msg.solAmount) });
+      if (x.events.length > 800) x.events.splice(0, x.events.length - 800);
+      return;
+    }
     if (msg.txType === 'buy' || msg.txType === 'sell') {
       const t = tokens.get(msg.mint);
       if (!t) return;
@@ -66,8 +74,8 @@ export function createPulse({ fetchJson }) {
       if (num(msg.marketCapSol)) t.marketCapSol = num(msg.marketCapSol);
       if (num(msg.vSolInBondingCurve)) t.vSol = num(msg.vSolInBondingCurve);
       if (!t.initialMcSol && t.marketCapSol) t.initialMcSol = t.marketCapSol;
-      t.events.push({ t: Date.now(), buy: msg.txType === 'buy', mc: t.marketCapSol });
-      if (t.events.length > 500) t.events.splice(0, t.events.length - 500);
+      t.events.push({ t: Date.now(), buy: msg.txType === 'buy', mc: t.marketCapSol, w: msg.traderPublicKey || null, sol });
+      if (t.events.length > 800) t.events.splice(0, t.events.length - 800);
     }
   }
 
@@ -236,6 +244,42 @@ export function createPulse({ fetchJson }) {
     return { newPairs, finalStretch, migrated, connected, solUsd };
   }
 
+
+  // Follow the live trades of extra mints (e.g. an older pump.fun coin that is trending now).
+  function track(mints) {
+    for (const m of mints) {
+      if (tokens.has(m)) { trk.delete(m); continue; }
+      const x = trk.get(m);
+      if (x) { x.seen = Date.now(); continue; }
+      trk.set(m, { events: [], at: Date.now(), seen: Date.now() });
+      pendingSubs.add(m);
+    }
+    if (trk.size > TRACK_MAX) {
+      const old = [...trk.entries()].sort((a, b) => a[1].seen - b[1].seen).slice(0, trk.size - TRACK_MAX);
+      for (const [k] of old) trk.delete(k);
+    }
+  }
+  // Real on-chain activity per window from the trade stream: swaps, buys/sells, unique wallets, SOL volume, price move.
+  function tradeStats(mint) {
+    const events = tokens.get(mint)?.events || trk.get(mint)?.events;
+    if (!events || !events.length) return null;
+    const since = tokens.get(mint)?.createdAt || trk.get(mint)?.at || Date.now();
+    const calc = (ms) => {
+      const cut = Date.now() - ms;
+      const w = new Set(), buyers = new Set(), sellers = new Set();
+      let swaps = 0, buys = 0, sells = 0, volSol = 0, first = null, last = null;
+      for (const e of events) {
+        if (e.t < cut) continue;
+        swaps++; volSol += e.sol || 0;
+        if (e.buy) { buys++; if (e.w) buyers.add(e.w); } else { sells++; if (e.w) sellers.add(e.w); }
+        if (e.w) w.add(e.w);
+        if (e.mc) { if (first === null) first = e.mc; last = e.mc; }
+      }
+      return { swaps, buys, sells, wallets: w.size, buyers: buyers.size, sellers: sellers.size, volUsd: volSol * solUsd, change: first && last ? (last / first - 1) * 100 : null, since: Math.min(ms, Date.now() - since) };
+    };
+    return { m5: calc(5 * 60000), h1: calc(3600000) };
+  }
+
   function start() {
     updateSol(); setInterval(updateSol, 120000);
     setInterval(() => {
@@ -247,5 +291,5 @@ export function createPulse({ fetchJson }) {
     connect();
   }
 
-  return { start, snapshot, handleMessage, _tokens: tokens, _setSol: (v) => { solUsd = v; } };
+  return { start, snapshot, handleMessage, track, tradeStats, _tokens: tokens, _setSol: (v) => { solUsd = v; } };
 }

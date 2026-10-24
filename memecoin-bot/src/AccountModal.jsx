@@ -25,8 +25,8 @@ export default function AccountModal({ onClose }) {
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: '#17181f',
-          border: '1px solid #2e303a',
+          background: '#111a26',
+          border: '1px solid #223247',
           borderRadius: 12,
           maxWidth: 400,
           width: '100%',
@@ -39,10 +39,10 @@ export default function AccountModal({ onClose }) {
           <button onClick={onClose} style={{ padding: '4px 10px' }}>✕</button>
         </div>
 
-        <div style={{ fontSize: 12, color: '#888', marginBottom: 4 }}>Signed in as</div>
+        <div style={{ fontSize: 12, color: '#8296ad', marginBottom: 4 }}>Signed in as</div>
         <div style={{ fontSize: 15, marginBottom: 20, wordBreak: 'break-all' }}>{user?.email}</div>
 
-        <div style={{ fontSize: 12, color: '#888', marginBottom: 20 }}>
+        <div style={{ fontSize: 12, color: '#8296ad', marginBottom: 20 }}>
           Your paper balance, positions, and trade history are saved to this account and will be here
           whenever you log back in, on any device.
         </div>
@@ -53,8 +53,8 @@ export default function AccountModal({ onClose }) {
             width: '100%',
             padding: 10,
             background: '#3a1717',
-            color: '#f44336',
-            borderColor: '#f44336',
+            color: '#ff5d6c',
+            borderColor: '#ff5d6c',
             fontWeight: 'bold',
             borderRadius: 6,
             cursor: 'pointer',

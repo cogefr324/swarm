@@ -155,7 +155,7 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
   }
 
   return (
-    <div style={{ maxWidth: '100%', margin: '20px 0', padding: 16, border: '1px solid #2e303a', borderRadius: 8, background: '#17181f', boxShadow: 'rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px' }}>
+    <div style={{ maxWidth: '100%', margin: '20px 0', padding: 16, border: '1px solid #223247', borderRadius: 8, background: '#111a26', boxShadow: 'rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px' }}>
       {onBack && (
         <button onClick={onBack} style={{ marginBottom: 12, fontSize: 13 }}>
           ← Back to Menu
@@ -163,40 +163,40 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
       )}
       <h3 style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
         <CoinIcon mint={coin.mint} src={coin.iconUrl} symbol={coin.symbol} size={32} />
-        {coin.symbol} <span style={{ color: '#888', fontWeight: 'normal' }}>({coin.name})</span>
-        {isActive && <span style={{ fontSize: 12, color: '#4caf50', border: '1px solid #4caf50', borderRadius: 4, padding: '2px 8px' }}>Active</span>}
-        {isWaiting && <span style={{ fontSize: 12, color: '#c084fc', border: '1px solid #c084fc', borderRadius: 4, padding: '2px 8px' }}>Waiting for Entry</span>}
+        {coin.symbol} <span style={{ color: '#8296ad', fontWeight: 'normal' }}>({coin.name})</span>
+        {isActive && <span style={{ fontSize: 12, color: '#3ddc97', border: '1px solid #3ddc97', borderRadius: 4, padding: '2px 8px' }}>Active</span>}
+        {isWaiting && <span style={{ fontSize: 12, color: '#5ec8ff', border: '1px solid #5ec8ff', borderRadius: 4, padding: '2px 8px' }}>Waiting for Entry</span>}
       </h3>
 
-      <div style={{ fontSize: 24, fontWeight: 'bold', color: '#c084fc', marginBottom: 8 }}>
+      <div style={{ fontSize: 24, fontWeight: 'bold', color: '#5ec8ff', marginBottom: 8 }}>
         MC: {formatMC(displayMc, displayMcIsFdv)}
       </div>
 
       {isActive && (
-        <div style={{ marginBottom: 12, padding: 10, background: '#1f2028', borderRadius: 8, display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+        <div style={{ marginBottom: 12, padding: 10, background: '#162233', borderRadius: 8, display: 'flex', gap: 20, flexWrap: 'wrap' }}>
           <div>
-            <div style={{ fontSize: 11, color: '#888' }}>Budget / Available</div>
+            <div style={{ fontSize: 11, color: '#8296ad' }}>Budget / Available</div>
             <div>${position.budgetUsd.toFixed(2)} / ${position.availableCash.toFixed(2)}</div>
           </div>
           <div>
-            <div style={{ fontSize: 11, color: '#888' }}>Holding Value</div>
+            <div style={{ fontSize: 11, color: '#8296ad' }}>Holding Value</div>
             <div>${heldValue.toFixed(2)}</div>
           </div>
           <div>
-            <div style={{ fontSize: 11, color: '#888' }}>Avg Cost</div>
+            <div style={{ fontSize: 11, color: '#8296ad' }}>Avg Cost</div>
             <div>${position.avgCostBasis.toFixed(8)}</div>
           </div>
           <div>
-            <div style={{ fontSize: 11, color: '#888' }}>Unrealized (still holding)</div>
-            <div style={{ color: unrealizedPnl >= 0 ? '#4caf50' : '#f44336', fontWeight: 'bold' }}>{unrealizedPnl >= 0 ? '+' : '-'}${Math.abs(unrealizedPnl).toFixed(2)}</div>
+            <div style={{ fontSize: 11, color: '#8296ad' }}>Unrealized (still holding)</div>
+            <div style={{ color: unrealizedPnl >= 0 ? '#3ddc97' : '#ff5d6c', fontWeight: 'bold' }}>{unrealizedPnl >= 0 ? '+' : '-'}${Math.abs(unrealizedPnl).toFixed(2)}</div>
           </div>
           <div>
-            <div style={{ fontSize: 11, color: '#888' }}>Realized (sold)</div>
-            <div style={{ color: position.realizedPnlUsd >= 0 ? '#4caf50' : '#f44336', fontWeight: 'bold' }}>{position.realizedPnlUsd >= 0 ? '+' : '-'}${Math.abs(position.realizedPnlUsd).toFixed(2)}</div>
+            <div style={{ fontSize: 11, color: '#8296ad' }}>Realized (sold)</div>
+            <div style={{ color: position.realizedPnlUsd >= 0 ? '#3ddc97' : '#ff5d6c', fontWeight: 'bold' }}>{position.realizedPnlUsd >= 0 ? '+' : '-'}${Math.abs(position.realizedPnlUsd).toFixed(2)}</div>
           </div>
           <div>
-            <div style={{ fontSize: 11, color: '#888' }}>Total PnL (realized + unrealized)</div>
-            <div style={{ color: totalPnl >= 0 ? '#4caf50' : '#f44336', fontWeight: 'bold' }}>
+            <div style={{ fontSize: 11, color: '#8296ad' }}>Total PnL (realized + unrealized)</div>
+            <div style={{ color: totalPnl >= 0 ? '#3ddc97' : '#ff5d6c', fontWeight: 'bold' }}>
               {totalPnlPct.toFixed(2)}% (${totalPnl.toFixed(2)})
             </div>
           </div>
@@ -207,7 +207,7 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
       )}
 
       <div style={{ fontSize: 13, color: '#aaa' }}>Price: ${displayPrice < 0.01 ? displayPrice.toFixed(8) : displayPrice.toFixed(4)}</div>
-      <div style={{ fontSize: 13, color: '#aaa' }}>24h change: <span style={{ color: coin.priceChange24h >= 0 ? '#4caf50' : '#f44336' }}>{coin.priceChange24h?.toFixed(2)}%</span></div>
+      <div style={{ fontSize: 13, color: '#aaa' }}>24h change: <span style={{ color: coin.priceChange24h >= 0 ? '#3ddc97' : '#ff5d6c' }}>{coin.priceChange24h?.toFixed(2)}%</span></div>
       <div style={{ fontSize: 13, color: '#aaa' }}>Liquidity: ${coin.liquidityUsd.toLocaleString('en-US')}</div>
       <div style={{ fontSize: 13, color: '#aaa' }}>24h volume: ${coin.volume24h.toLocaleString('en-US')}</div>
       {coin.txns?.h24 && (coin.txns.h24.buys + coin.txns.h24.sells) > 0 && (
@@ -216,13 +216,13 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
 
       {(() => {
         const verdict = fullVerdict({ rc: rc.data, marketCap: coin.marketCap, liquidityUsd: coin.liquidityUsd, volume24h: coin.volume24h });
-        const vColor = { low: '#4caf50', medium: '#ffb74d', high: '#f44336', rugged: '#f44336', unknown: '#888' }[verdict.level];
+        const vColor = { low: '#3ddc97', medium: '#ffb74d', high: '#ff5d6c', rugged: '#ff5d6c', unknown: '#8296ad' }[verdict.level];
         const vText = { low: 'LOW RISK', medium: 'MEDIUM RISK', high: 'HIGH RISK', rugged: 'RUGGED', unknown: 'UNKNOWN' }[verdict.level];
         const d = rc.data;
         return (
-          <div style={{ marginTop: 12, padding: 10, background: '#1f2028', borderRadius: 8, fontSize: 13 }}>
+          <div style={{ marginTop: 12, padding: 10, background: '#162233', borderRadius: 8, fontSize: 13 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <span style={{ fontWeight: 'bold', color: '#c084fc' }}>Coin info</span>
+              <span style={{ fontWeight: 'bold', color: '#5ec8ff' }}>Coin info</span>
               {!rc.loading && <span style={{ fontWeight: 'bold', color: vColor }}>{vText}{d?.riskScore != null ? ` · RugCheck ${Math.round(d.riskScore)}/100 (higher = riskier)` : ''}</span>}
             </div>
             {verdict.reasons.length > 0 && !rc.loading && (
@@ -246,17 +246,17 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
                   onClick={() => api.pinCoin(coin.mint).then(() => setCaNote('Pinned - it will show in Top when over $10M')).catch((e) => setCaNote(e.message || 'Could not pin'))}
                   style={{ padding: '1px 8px', fontSize: 11 }}
                 >📌 Pin to Top</button>
-                {caNote && <span style={{ fontSize: 11, color: '#888' }}>{caNote}</span>}
+                {caNote && <span style={{ fontSize: 11, color: '#8296ad' }}>{caNote}</span>}
               </div>
               {coin.pairCreatedAt ? <div>Age: <span style={{ color: '#eee' }}>{formatAge(coin.pairCreatedAt)}</span></div> : null}
-              {rc.loading && <div>Dev / bundles / holders: <span style={{ color: '#888' }}>loading...</span></div>}
+              {rc.loading && <div>Dev / bundles / holders: <span style={{ color: '#8296ad' }}>loading...</span></div>}
               {!rc.loading && !d && <div style={{ gridColumn: '1 / -1' }}>Dev / bundle / holder data unavailable right now (RugCheck didn't answer).</div>}
               {d && (
                 <>
-                  <div>Dev holding: <span style={{ color: d.devPct > 10 ? '#f44336' : '#eee' }}>{d.devPct == null ? 'n/a' : d.devPct === 0 ? 'not in top holders (~0%)' : `${d.devPct.toFixed(2)}%`}</span></div>
+                  <div>Dev holding: <span style={{ color: d.devPct > 10 ? '#ff5d6c' : '#eee' }}>{d.devPct == null ? 'n/a' : d.devPct === 0 ? 'not in top holders (~0%)' : `${d.devPct.toFixed(2)}%`}</span></div>
                   <div>
                     Bundled / insider wallets:{' '}
-                    <span style={{ color: d.insiderHoldingPct >= 20 ? '#f44336' : d.insiderWallets > 0 ? '#ffb74d' : '#eee' }}>
+                    <span style={{ color: d.insiderHoldingPct >= 20 ? '#ff5d6c' : d.insiderWallets > 0 ? '#ffb74d' : '#eee' }}>
                       {d.insiderWallets > 0
                         ? `${d.insiderWallets.toLocaleString('en-US')}${d.insiderHoldingPct > 0 ? ` · ${d.insiderHoldingPct.toFixed(1)}% of supply` : ''}`
                         : 'none detected'}
@@ -264,9 +264,9 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
                   </div>
                   <div>Top 10 holders: <span style={{ color: d.top10Pct > 40 ? '#ffb74d' : '#eee' }}>{d.top10Pct == null ? 'n/a' : `${d.top10Pct.toFixed(1)}%`}</span></div>
                   {d.totalHolders != null && <div>Total holders: <span style={{ color: '#eee' }}>{Number(d.totalHolders).toLocaleString('en-US')}</span></div>}
-                  {d.lpLockedPct != null && <div>LP locked/burned: <span style={{ color: d.lpLockedPct >= 90 ? '#4caf50' : '#ffb74d' }}>{d.lpLockedPct.toFixed(0)}%</span></div>}
-                  <div>Mint authority: <span style={{ color: d.mintAuthorityActive ? '#f44336' : '#4caf50' }}>{d.mintAuthorityActive ? 'still active' : 'revoked'}</span></div>
-                  <div>Freeze authority: <span style={{ color: d.freezeAuthorityActive ? '#f44336' : '#4caf50' }}>{d.freezeAuthorityActive ? 'still active' : 'revoked'}</span></div>
+                  {d.lpLockedPct != null && <div>LP locked/burned: <span style={{ color: d.lpLockedPct >= 90 ? '#3ddc97' : '#ffb74d' }}>{d.lpLockedPct.toFixed(0)}%</span></div>}
+                  <div>Mint authority: <span style={{ color: d.mintAuthorityActive ? '#ff5d6c' : '#3ddc97' }}>{d.mintAuthorityActive ? 'still active' : 'revoked'}</span></div>
+                  <div>Freeze authority: <span style={{ color: d.freezeAuthorityActive ? '#ff5d6c' : '#3ddc97' }}>{d.freezeAuthorityActive ? 'still active' : 'revoked'}</span></div>
                 </>
               )}
             </div>
@@ -277,13 +277,13 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
       <button onClick={openXSearch} style={{ marginTop: 10, fontSize: 12 }}>
         Check X/Twitter for hype ↗
       </button>
-      <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
+      <div style={{ fontSize: 11, color: '#8296ad', marginTop: 4 }}>
         Opens a live X search in a new tab - not automated, use as a manual gut-check.
       </div>
 
       {coin.pairAddress && (
         <div style={{ marginTop: 16 }}>
-          <div style={{ borderRadius: 8, overflow: 'hidden', border: '1px solid #2e303a' }}>
+          <div style={{ borderRadius: 8, overflow: 'hidden', border: '1px solid #223247' }}>
             <iframe
               key={coin.pairAddress}
               src={`https://dexscreener.com/solana/${coin.pairAddress}?embed=1&theme=dark&trades=0&info=0`}
@@ -293,26 +293,26 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
               style={{ border: 'none' }}
             />
           </div>
-          <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
+          <div style={{ fontSize: 11, color: '#8296ad', marginTop: 4 }}>
             Chart not loading? Some very new or thin pairs don't render in the embed -{' '}
-            <a href={`https://dexscreener.com/solana/${coin.pairAddress}`} target="_blank" rel="noreferrer" style={{ color: '#c084fc' }}>
+            <a href={`https://dexscreener.com/solana/${coin.pairAddress}`} target="_blank" rel="noreferrer" style={{ color: '#5ec8ff' }}>
               open it directly on DexScreener ↗
             </a>
           </div>
         </div>
       )}
       {!coin.pairAddress && (
-        <div style={{ marginTop: 16, fontSize: 13, color: '#f44336' }}>
+        <div style={{ marginTop: 16, fontSize: 13, color: '#ff5d6c' }}>
           No pair address for this coin, so no chart can be shown. Try re-searching it.
         </div>
       )}
 
       <CoinTradeHistory mint={coin.mint} symbol={coin.symbol} position={position} closedTrades={closedTrades} />
 
-      <div style={{ marginTop: 16, padding: 12, background: '#1f2028', borderRadius: 8 }}>
+      <div style={{ marginTop: 16, padding: 12, background: '#162233', borderRadius: 8 }}>
         {isWaiting ? (
           <>
-            <div style={{ fontWeight: 'bold', color: '#c084fc' }}>Analyzing {coin.symbol}...</div>
+            <div style={{ fontWeight: 'bold', color: '#5ec8ff' }}>Analyzing {coin.symbol}...</div>
             <div style={{ fontSize: 13, marginTop: 4 }}>
               Budget: ${position.budgetUsd.toFixed(2)} &nbsp;|&nbsp; Pullback from high: <strong>{drawdownPct.toFixed(2)}%</strong> (buys tranche at {settings.dipBuyThresholdPct}%)
             </div>
@@ -324,7 +324,7 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
               Cancel (Return ${position.budgetUsd.toFixed(2)} to Balance)
             </button>
 
-            <div style={{ marginTop: 12, borderTop: '1px solid #2e303a', paddingTop: 10 }}>
+            <div style={{ marginTop: 12, borderTop: '1px solid #223247', paddingTop: 10 }}>
               <label style={{ fontSize: 13 }}>
                 Buy extra now instead of waiting ($):
                 <input
@@ -335,12 +335,12 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
                 />
               </label>
               <button onClick={handleBuyNow} style={{ marginLeft: 8, fontSize: 12 }}>Buy Now</button>
-              <span style={{ marginLeft: 8, fontSize: 11, color: '#888' }}>(available: ${position.availableCash.toFixed(2)})</span>
+              <span style={{ marginLeft: 8, fontSize: 11, color: '#8296ad' }}>(available: ${position.availableCash.toFixed(2)})</span>
             </div>
           </>
         ) : isActive ? (
           <div style={{ fontSize: 13 }}>
-            <div style={{ fontWeight: 'bold', color: '#4caf50', marginBottom: 4 }}>
+            <div style={{ fontWeight: 'bold', color: '#3ddc97', marginBottom: 4 }}>
               Actively farming - buys tranches on dips/spikes, sells tranches on pumps, repeats until you close it.
             </div>
             Next buy trigger: -{settings.dipBuyThresholdPct}% pullback (or a spike) &nbsp;|&nbsp;
@@ -348,7 +348,7 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
             Hard stop-loss: -{settings.stopLossPct}% from avg cost (full close)
 
             {position.availableCash > 0 && (
-              <div style={{ marginTop: 12, borderTop: '1px solid #2e303a', paddingTop: 10 }}>
+              <div style={{ marginTop: 12, borderTop: '1px solid #223247', paddingTop: 10 }}>
                 <label>
                   Buy extra now instead of waiting ($):
                   <input
@@ -359,7 +359,7 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
                   />
                 </label>
                 <button onClick={handleBuyNow} style={{ marginLeft: 8, fontSize: 12 }}>Buy Now</button>
-                <span style={{ marginLeft: 8, fontSize: 11, color: '#888' }}>(available: ${position.availableCash.toFixed(2)})</span>
+                <span style={{ marginLeft: 8, fontSize: 11, color: '#8296ad' }}>(available: ${position.availableCash.toFixed(2)})</span>
               </div>
             )}
           </div>
@@ -375,7 +375,7 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
                   style={{ marginLeft: 8, width: 100, padding: 6 }}
                 />
               </label>
-              <span style={{ marginLeft: 8, fontSize: 12, color: '#888' }}>(balance: ${balance.toFixed(2)})</span>
+              <span style={{ marginLeft: 8, fontSize: 12, color: '#8296ad' }}>(balance: ${balance.toFixed(2)})</span>
             </div>
 
             <button onClick={handleStartFarming} disabled={analyzing}>
@@ -395,18 +395,18 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
               <button onClick={handleBuyNow} style={{ marginLeft: 8, fontSize: 12 }} disabled={analyzing}>
                 Buy Now
               </button>
-              <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>
+              <div style={{ fontSize: 11, color: '#8296ad', marginTop: 2 }}>
                 The rest of the ${budgetInput || '0'} budget stays available for automatic dip/spike tranche buys later.
               </div>
             </div>
 
             {analysis && !analysis.passed && (
-              <div style={{ marginTop: 10, color: '#f44336', fontSize: 13 }}>
+              <div style={{ marginTop: 10, color: '#ff5d6c', fontSize: 13 }}>
                 <div style={{ fontWeight: 'bold' }}>Analysis failed - not farming this coin:</div>
                 <ul style={{ margin: '4px 0', paddingLeft: 18 }}>
                   {analysis.reasons.map((r, i) => <li key={i}>{r}</li>)}
                 </ul>
-                <div style={{ color: '#888' }}>You can still "Buy Now" above to override this manually.</div>
+                <div style={{ color: '#8296ad' }}>You can still "Buy Now" above to override this manually.</div>
               </div>
             )}
             {analysis && analysis.passed && analysis.warnings.length > 0 && (
@@ -420,7 +420,7 @@ export default function CoinDetailPanel({ coin: rawCoin, onBack }) {
           </>
         )}
       </div>
-      {message && <div style={{ marginTop: 10, fontSize: 13, color: '#4caf50' }}>{message}</div>}
+      {message && <div style={{ marginTop: 10, fontSize: 13, color: '#3ddc97' }}>{message}</div>}
     </div>
   );
 }

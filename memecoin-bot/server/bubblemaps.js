@@ -26,9 +26,9 @@ export const BUBBLE_CFG = {
   maxCluster: num('BUBBLE_MAX_CLUSTER', 0.25),
   minScore: num('BUBBLE_MIN_SCORE', 0), // 0 = ignore bubblemaps_score (it is often null for new coins)
   // free fallback (RugCheck)
-  maxInsiderPct: num('RC_MAX_INSIDER_PCT', 50),
-  maxTop10Pct: num('RC_MAX_TOP10_PCT', 70),
-  rcPerCycle: num('RC_FULL_PER_CYCLE', 6),
+  maxInsiderPct: num('RC_MAX_INSIDER_PCT', 90),
+  maxTop10Pct: num('RC_MAX_TOP10_PCT', 90),
+  rcPerCycle: num('RC_FULL_PER_CYCLE', 24),
 };
 export const bubbleEnabled = () => !!BUBBLE_CFG.key;
 
@@ -127,6 +127,7 @@ export function reportVerdict(rep, cfg = BUBBLE_CFG) {
   return { source: 'rugcheck-holders', bad, insiderPct: worst, top10, networks: nets.length };
 }
 export async function refreshReports(mints) {
+  if (!HOLDER_FILTER) return;
   const need = mints.filter((m) => { const h = rcCache.get(m); return !h || Date.now() - h.at > 30 * 60000; }).slice(0, BUBBLE_CFG.rcPerCycle);
   await Promise.all(need.map(async (mint) => {
     try {
@@ -139,9 +140,12 @@ export async function refreshReports(mints) {
 export const reportOf = (mint) => rcCache.get(mint)?.v || null;
 
 // The one question the feed asks: why (if at all) should this coin be hidden for holder concentration?
-export function holderBlock(mint, list) {
+// Extreme-only holder check: hides a coin when insiders (or the top 10 holders) own 90%+ of supply. Set HOLDER_FILTER=0 to turn it off.
+export const HOLDER_FILTER = !/^(0|false|no|off)$/i.test(process.env.HOLDER_FILTER || '1');
+export function holderBlock(mint, list, { onCurve = false } = {}) {
   const cb = conyrFeedBlock(mint); if (cb) return cb;
   const b = bubbleOf(mint); if (b?.bad) return `bubblemaps: ${b.bad}`;
-  const r = reportOf(mint); if (r?.bad && !(list === 'top' && /^top10/.test(r.bad))) return `holders: ${r.bad}`;
+  if (!HOLDER_FILTER) return null;
+  const r = reportOf(mint); if (r?.bad && !(onCurve && /^top10/.test(r.bad))) return `holders: ${r.bad}`;
   return null;
 }

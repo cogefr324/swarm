@@ -44,12 +44,15 @@ app.use(express.json());
 
 
 // ---- Strict feed filters ----
-const TOP_MIN_VOLUME_USD = Number(process.env.TOP_MIN_VOLUME_USD) || 30000; // Top needs real trading
+const TOP_MIN_VOLUME_USD = Number(process.env.TOP_MIN_VOLUME_USD) || 50000; // Top needs real trading
 const TOP_MIN_TXNS = Number(process.env.TOP_MIN_TXNS) || 100;
-const MIN_VOLUME_USD = 1000; // hide anything under $1,000 24h volume
+const TOP_MIN_HOLDERS = Number(process.env.TOP_MIN_HOLDERS) || 10000; // Top only lists coins with this many holders
+const MIN_VOLUME_USD = Number(process.env.MIN_VOLUME_USD) || 3000; // hide anything under this 24h volume - in EVERY list
 const MIN_LIQUIDITY_USD = 1000; // optional extra scam filter
-const RUG_PER_CYCLE = 30;
-const AUTH_PER_CYCLE = 25;
+const BUY_SELL_MAX_RATIO = Number(process.env.BUY_SELL_MAX_RATIO || 1.9);
+const BUY_SELL_MIN_TXNS = Number(process.env.BUY_SELL_MIN_TXNS || 40);
+const RUG_PER_CYCLE = 60;
+const AUTH_PER_CYCLE = 50;
 const TRENDING_RUG_SCORE_MAX = 60;
 
 
@@ -158,6 +161,7 @@ import { createPulse } from './pulse.js';
 import { summaryVerdict } from '../src/rugAnalysis.js';
 import { SERVER_VERSION } from '../src/version.js';
 import { rpc as chainRpc } from './onchain-bundle.js';
+import { rankWindows, combineWindows, windowsFromPairs, WINDOWS } from './trending.js';
 import { requestChartScan, chartState, chartStats } from './chartscan.js';
 import { requestWashScan, washState, washStats } from './washtrade.js';
 import { requestBundleScan, bundleState, bundleStats } from './onchain-bundle.js';
@@ -165,7 +169,7 @@ import { conyrRefresh, conyrEnabled, conyrStatus } from './conyr.js';
 import { refreshBubbles, refreshReports, holderBlock, bubbleEnabled, bubbleStatus } from './bubblemaps.js';
 
 
-const FEED_REFRESH_MS = 12000;
+const FEED_REFRESH_MS = 8000;
 let feedCache = null; // { at, data }
 let feedRefreshing = false;
 const rawCache = new Map(); // url -> { at, data }
@@ -445,6 +449,30 @@ async function fullLpPct(mint) {
     return Number(ms[0].lp.lpLockedPct);
   } catch { return null; }
 }
+
+// ---- Holder counts (Jupiter's free token data, RugCheck as backup) ----
+const holderCache = new Map(); // mint -> { n, at }
+const holderTries = new Map();
+async function refreshHolders(mints, maxJup = 4, maxRug = 6) {
+  const need = mints.filter((m) => { const h = holderCache.get(m); return !h || Date.now() - h.at > 30 * 60000; });
+  const chunks = [];
+  for (let i = 0; i < need.length && chunks.length < maxJup; i += 50) chunks.push(need.slice(i, i + 50));
+  await Promise.all(chunks.map(async (chunk) => {
+    const list = await serverFetchJson(`https://lite-api.jup.ag/tokens/v2/search?query=${chunk.join(',')}`, 600000);
+    for (const t of Array.isArray(list) ? list : []) if (chunk.includes(t.id) && Number(t.holderCount) > 0) holderCache.set(t.id, { n: Number(t.holderCount), at: Date.now() });
+  }));
+  // anything Jupiter did not answer: ask RugCheck's full report (a few per cycle)
+  const still = need.filter((m) => !holderCache.has(m) && (holderTries.get(m) || 0) < 4).slice(0, maxRug);
+  await Promise.all(still.map(async (m) => {
+    holderTries.set(m, (holderTries.get(m) || 0) + 1);
+    try {
+      const r = await fetch(`https://api.rugcheck.xyz/v1/tokens/${m}/report`, { signal: AbortSignal.timeout(8000) });
+      if (r.ok) { const n = Number((await r.json()).totalHolders); if (n > 0) holderCache.set(m, { n, at: Date.now() }); }
+    } catch { /* retry next cycle */ }
+  }));
+}
+const holdersOf = (mint) => holderCache.get(mint)?.n ?? null;
+
 const topShown = new Map(); // mint -> last time it passed every Top rule
 async function checkListSafety({ top, trending, newPairs }) {
   const prio = [...newPairs.slice(0, 60), ...trending.slice(0, 60), ...top, ...trending.slice(60)];
@@ -506,6 +534,9 @@ async function checkListSafety({ top, trending, newPairs }) {
   await Promise.all([refreshBubbles(live), refreshReports(live), conyrRefresh(live, 1)]);
 
 
+  // 2c) holder counts: Top needs real numbers, the table shows them for Trending too
+  await refreshHolders([...top.map((e) => e.mint), ...trending.slice(0, 60).map((e) => e.mint)]).catch(() => {});
+
   // 3) strict filter - applies to Top, Trending, and New Pairs
   const DAY = 24 * 3600 * 1000;
   const young = (e, days) => !e.pairCreatedAt || Date.now() - e.pairCreatedAt < days * DAY;
@@ -528,7 +559,7 @@ async function checkListSafety({ top, trending, newPairs }) {
 
 
     // Bundled / clustered / insider-held supply (the "obvious rug" that passes mint, freeze and LP checks)
-    const hb = holderBlock(e.mint, list);
+    const hb = holderBlock(e.mint, list, { onCurve: onCurve(e) });
     if (hb) return hb;
 
 
@@ -543,17 +574,24 @@ async function checkListSafety({ top, trending, newPairs }) {
     // Show-only-if-proven: Trending and New need a CLEAN on-chain bundle scan (hidden until it is done); Top only hides confirmed bundles.
     const bs = bundleState(e.mint);
     if (bs.status === 'bundled') return `bundled ${bs.pct.toFixed(0)}%`;
+    { // one-sided 24h flow: buys outnumber sells by BUY_SELL_MAX_RATIO (default 1.9 = 90% more) -> fake/only-green
+      const t = e.txns?.h24, b = t?.buys || 0, sl = t?.sells || 0;
+      if (b + sl >= BUY_SELL_MIN_TXNS && b >= sl * BUY_SELL_MAX_RATIO) return `buys ${(b / Math.max(sl, 1)).toFixed(1)}x sells (24h)`;
+    }
     if (list === 'top' && e.pairCreatedAt && Date.now() - e.pairCreatedAt < DAY) return 'too new for Top';
     if (list === 'top') {
+      const hc = holdersOf(e.mint);
+      if (hc == null) return 'holders unknown';
+      if (hc < TOP_MIN_HOLDERS) return `holders < ${TOP_MIN_HOLDERS}`;
       // Top = coins people really trade. A $10M+ cap with tiny volume / few trades is a bot-driven or dead pool (smooth fake climb).
       const tv = Number(e.volume24h ?? 0), t24 = e.txns?.h24, n24 = t24 ? (t24.buys || 0) + (t24.sells || 0) : 0;
-      if (tv > 0 && tv < TOP_MIN_VOLUME_USD) return 'low volume for Top';
+      if (tv < TOP_MIN_VOLUME_USD) return 'low volume for Top';
       if (n24 > 0 && n24 < TOP_MIN_TXNS) return 'few trades for Top';
     }
 
     // Volume floor everywhere
     const vol = Number(e.volume24h ?? e.volume ?? e.volumeUsd ?? 0);
-    if (!(list === 'top' && !vol) && vol < MIN_VOLUME_USD) return `volume < $${MIN_VOLUME_USD}`;
+    if (vol < MIN_VOLUME_USD) return `volume < $${MIN_VOLUME_USD}`;
 
 
     // Liquidity floor everywhere
@@ -576,7 +614,7 @@ async function checkListSafety({ top, trending, newPairs }) {
 
 
   // Coins already shown in Top stay for 15 min when the only problem is a soft one (numbers flickering), so lists do not shrink and regrow.
-  const SOFT = /^(volume|liquidity|low volume|few trades|too new|unchecked)/;
+  const SOFT = /^(volume|liquidity|low volume|few trades|too new|unchecked|holders unknown)/;
   const apply = (list, name) => list.filter((e, idx) => {
     let why = verdict(e, name, idx);
     if (name === 'top') { if (!why) topShown.set(e.mint, Date.now()); else if (SOFT.test(why) && Date.now() - (topShown.get(e.mint) || 0) < 15 * 60000) why = null; }
@@ -716,6 +754,41 @@ async function improveTrending(trending) {
   return uniq.map((e, i) => [e, score(e, i)]).sort((a, b) => b[1] - a[1]).map((x) => x[0]).slice(0, 100);
 }
 
+// ---- Axiom-style trending windows (5m / 1h / 6h / 24h) ----
+async function buildTrendingWindows(data) {
+  const improved = await improveTrending(data.trending).catch(() => data.trending);
+  let snap = {}; try { snap = pulse.snapshot(); } catch { /* pulse not up yet */ }
+  const uni = new Map();
+  for (const e of [...improved, ...(data.movers || []), ...(data.top || []).slice(0, 80), ...(data.newPairs || []).slice(0, 60), ...(snap.migrated || []), ...(snap.newPairs || []).slice(0, 60), ...watchSnap.values()]) {
+    if (e?.mint && !uni.has(e.mint)) uni.set(e.mint, e);
+  }
+  const mints = [...uni.keys()].slice(0, 360);
+  const chunks = [];
+  for (let i = 0; i < mints.length; i += 30) chunks.push(mints.slice(i, i + 30));
+  const cands = [];
+  for (let i = 0; i < chunks.length; i += 4) { // 4 DexScreener calls at a time (its free limit is generous)
+    await Promise.all(chunks.slice(i, i + 4).map(async (chunk) => {
+      const d = await serverFetchJson(`https://api.dexscreener.com/latest/dex/tokens/${chunk.join(',')}`, 6000);
+      for (const [mint, group] of groupPairs(d?.pairs)) {
+        const orig = uni.get(mint) || {};
+        const fresh = aggregatePairs(group, watch.get(mint) || {});
+        if (!fresh || isFakeMarket(fresh)) continue;
+        const entry = { ...orig, ...fresh, launchpad: orig.launchpad || fresh.launchpad, partnerConfig: orig.partnerConfig || fresh.partnerConfig, iconUrl: fresh.iconUrl || orig.iconUrl, bondingProgress: orig.bondingProgress, pairCreatedAt: orig.pairCreatedAt || fresh.pairCreatedAt };
+        cands.push({ entry, win: windowsFromPairs(group) });
+      }
+    }));
+  }
+  // follow the live trades of pump-origin coins that are active right now (unique wallets / swaps straight from the chain)
+  try {
+    const pumpy = cands.filter((c) => c.win.h1.volumeUsd > 2000 && /pump$/.test(c.entry.mint)).sort((a, b) => b.win.h1.volumeUsd - a.win.h1.volumeUsd).slice(0, 150).map((c) => c.entry.mint);
+    pulse.track(pumpy);
+  } catch { /* optional */ }
+  const windows = rankWindows(cands, (m) => { try { return pulse.tradeStats(m); } catch { return null; } });
+  for (const w of WINDOWS) windows[w] = (windows[w] || []).map(relabel);
+  windows.combined = combineWindows(windows);
+  return windows;
+}
+
 async function refreshFeed() {
   if (feedRefreshing) return;
   feedRefreshing = true;
@@ -728,11 +801,15 @@ async function refreshFeed() {
     await enrichLaunchpads(lpEntries).catch(() => {});
     await enrichFirstDex(lpEntries).catch(() => {});
     data.top = await repriceTop(data.top).catch(() => data.top.filter((e) => e.marketCap >= TOP_FLOOR));
-    data.trending = await improveTrending(data.trending).catch(() => data.trending);
+    const windows = await buildTrendingWindows(data).catch((e) => { console.warn('[trending]', e.message); return null; });
+    if (windows) { const seenW = new Set(); data.trending = windows.combined.filter((e) => !seenW.has(e.mint) && seenW.add(e.mint)); } else data.trending = await improveTrending(data.trending).catch(() => data.trending);
     const pulseNew = (() => { try { return pulse.snapshot().newPairs || []; } catch { return []; } })();
     const safe = await checkListSafety({ top: data.top, trending: data.trending, newPairs: [...pulseNew, ...data.newPairs] });
     data.top = safe.top;
-    data.trending = safe.trending;
+    const okMints = new Set(safe.trending.map((e) => e.mint));
+    if (windows) {
+      data.trending = windows.combined.filter((e) => okMints.has(e.mint)); // ONE combined list (all windows)
+    } else data.trending = safe.trending;
     data.newPairs = safe.newPairs;
     data.newPairsSafe = new Set(safe.newPairs.map((e) => e.mint));
 
@@ -774,13 +851,14 @@ app.get('/api/feed', authMiddleware, async (req, res) => {
     .slice(0, 100);
 
 
-  const rl = (list) => (list || []).map(relabel);
+  const rl = (list) => (list || []).map((e) => { const r = relabel(e); const h = holdersOf(e.mint); return h != null ? { ...r, holders: h } : r; });
 
 
   res.json({
     ...base,
     newPairsSafe: undefined,
     trending: rl(base.trending),
+    trendingWindows: base.trendingWindows ? Object.fromEntries(Object.entries(base.trendingWindows).map(([k, v]) => [k, rl(v)])) : undefined,
     top: rl(base.top),
     movers: rl(base.movers),
     newPairs: rl(newPairs),

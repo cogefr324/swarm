@@ -20,7 +20,7 @@ import { fileURLToPath } from 'url';
 
 import { conyrSummary, conyrEnabled } from './conyr.js';
 import { scanMint, classify, bundleFull } from './onchain-bundle.js';
-import { reportVerdict, refreshBubbles, bubbleOf, bubbleEnabled } from './bubblemaps.js';
+import { HOLDER_FILTER, reportVerdict, refreshBubbles, bubbleOf, bubbleEnabled } from './bubblemaps.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, 'data');
@@ -523,7 +523,7 @@ export async function verify({ mint, ticker, mode } = {}) {
     if (!rc.ok) { out.reasons.push(rc.error); out.retryable = true; out.rugcheck = { error: rc.error }; }
     else {
       analyseRugcheck(rc.report, target, cfg, out);
-      const hv = reportVerdict(rc.report);
+      const hv = HOLDER_FILTER ? reportVerdict(rc.report) : null;
       if (hv?.bad) out.reasons.push(`holder concentration: ${hv.bad}`);
     }
 
